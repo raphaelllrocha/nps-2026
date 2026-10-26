@@ -705,6 +705,10 @@ html,body{margin:0;background:#F5F5F8}
         </table>
       </div>
     </div>
+    <div class="ak-card" id="card-h2-executivo">
+      <div><h3>NPS por executivo · H2</h3><p class="ak-note">Executivo responsável pela carteira da corretora (comercial que atende) · n abaixo de cada nome</p></div>
+      <div class="ak-chart dash-skeleton" id="chart-h2-executivo" data-source="h2_executivo h2_resumo"></div>
+    </div>
   </div>
   <div class="ak-empty h2-off" hidden><h3>Aguardando a primeira carga do H2</h3><p>Suba a base parcial no projeto e peça "atualiza o H2".</p></div>
 </section>
@@ -768,20 +772,8 @@ html,body{margin:0;background:#F5F5F8}
 </section>
 
 <section class="ak-page" id="h2-vendas" data-page hidden>
-  <div class="ak-sec"><h2>Canal de vendas</h2><p>Quem atende a corretora e por qual canal ela produz.</p></div>
-  <div class="ak-page h2-on" hidden>
-  <div class="ak-grid">
-    <div class="ak-card" id="card-h2-executivo">
-      <div><h3>NPS por executivo · H2</h3><p class="ak-note">Executivo responsável pela corretora na base (comercial que atende) · n abaixo de cada nome</p></div>
-      <div class="ak-chart dash-skeleton" id="chart-h2-executivo" data-source="h2_executivo h2_resumo"></div>
-    </div>
-    <div class="ak-card" id="card-h2-vendas-pend">
-      <div><h3>Canal dominante de produção</h3><p class="ak-note">CORPORATE, DIGITAL, PARCERIA, SEM_CANAL</p></div>
-      <div class="ak-empty"><h3>Falta a Query Corretores</h3><p>Nem a base de corretores nem a de especialistas LTM trazem o canal dominante de produção (CORPORATE, DIGITAL, PARCERIA). Esse campo vinha da Query Corretores; com ele, o H2 ganha o mesmo corte do H1.</p></div>
-    </div>
-  </div>
-  </div>
-  <div class="ak-empty h2-off" hidden><h3>Aguardando a primeira carga do H2</h3><p>Suba a base parcial no projeto e peça "atualiza o H2".</p></div>
+  <div class="ak-sec"><h2>Canal de vendas</h2><p>Canal dominante de produção da corretora: CORPORATE, DIGITAL, PARCERIA ou SEM_CANAL. Mesmo corte da aba Canal de vendas do H1.</p></div>
+  <div class="ak-empty" id="h2-vendas-pend"><h3>Construindo visão para a próxima atualização</h3></div>
 </section>
 
 <section class="ak-page" id="h2-cluster" data-page hidden>
@@ -873,13 +865,13 @@ html,body{margin:0;background:#F5F5F8}
       </table>
     </div>
     <div class="ak-an-more"><button type="button" class="ak-btn" id="an-mais" hidden>Mostrar mais 300</button></div>
-    <p class="ak-foot">Respondeu H1 e Nota H1 entram quando a aba 2026_Consolidado (respostas do H1 com CNPJ) for subida no projeto. Produto e GWP LTM vêm da base corretores_especialistas_LTM. Só dados de cadastro e produção da corretora; nenhum dado pessoal de respondente.</p>
+    <p class="ak-foot">Respondeu H1 e Nota H1: construindo visão para a próxima atualização. Produto e GWP LTM vêm da base corretores_especialistas_LTM. Só dados de cadastro e produção da corretora; nenhum dado pessoal de respondente.</p>
   </div>
 </section>
 
 <p class="ak-foot">H2: export Typeform subido no projeto NPS H2, ligado à base de corretores NPS 2026 (CNPJ, hash, nome), sem dados pessoais de respondente. H1: NPS 2026_V4.xlsx (Final_Usar Esse, 2026_Consolidado, Query Corretores), análises do dash NPS Akad 2026 v5 e briefing do projeto NPS H2. NPS = % promotores − % detratores, 1 resposta = 1 voto.</p>
 
-<p class="ak-foot">Versão para download gerada em 23/10/2026 a partir do dashboard NPS 2026 (dados congelados nesta data: H1 fechado, H2 parcial).</p>
+<p class="ak-foot">Versão para download gerada em 26/10/2026 a partir do dashboard NPS 2026 (dados congelados nesta data: H1 fechado, H2 parcial).</p>
 </div>
 </div>
 </div>
@@ -1530,7 +1522,7 @@ html,body{margin:0;background:#F5F5F8}
       });
       chart('chart-areas-h2', ['h2_areas'], function (h, ar) {
         ar = ar.filter(function (r) { return r.respostas > 0; });
-        if (!ar.length) { h.append(el('div', 'ak-muted-line', 'Nenhuma resposta desta carga tem área preenchida. A área só existe no WhatsApp Manual, que ainda tem pouco volume no H2.')); return; }
+        if (!ar.length) { h.append(el('div', 'ak-muted-line', 'Construindo visão para a próxima atualização.')); return; }
         hbars(h, ar.slice().sort(function (a, b) { return b.nps - a.nps; }).map(function (r) {
           var small = r.respostas < 30;
           return { label: r.area, value: r.nps, sub: 'n=' + f0(r.respostas) + ' · ' + pc(r.share) + ' do canal' + (small ? ' · amostra pequena' : ''),
@@ -1768,7 +1760,7 @@ html,body{margin:0;background:#F5F5F8}
       var r = all[i], tr = el('tr'); tr.setAttribute('data-key', r.lid);
       var cls = !isNum(r.nota_h2) ? 'mut' : r.nota_h2 >= 9 ? 'good' : r.nota_h2 <= 6 ? 'bad' : 'k';
       [[r.corretor, 'k wrap'], [r.cnpj || '—', ''], [r.assessoria, 'wrap'], [r.carteira, ''], [r.cluster, ''], [r.executivo, ''], [r.produto || '—', r.produto === 'Sem produção LTM' ? 'mut' : ''], [brl(r.gwp_ltm), 'r' + (isNum(r.gwp_ltm) ? '' : ' mut')],
-       ['aguardando base', 'mut'], ['—', 'r mut'], [r.resp_h2, r.resp_h2 === 'Sim' ? 'hl' : 'mut'], [isNum(r.nota_h2) ? f0(r.nota_h2) : '—', 'r ' + cls],
+       ['—', 'mut'], ['—', 'r mut'], [r.resp_h2, r.resp_h2 === 'Sim' ? 'hl' : 'mut'], [isNum(r.nota_h2) ? f0(r.nota_h2) : '—', 'r ' + cls],
        [r.canal_h2 || '—', r.canal_h2 ? '' : 'mut'], [r.data_h2 ? dt(r.data_h2) : '—', r.data_h2 ? '' : 'mut'], [f0(r.total_h2), 'r']].forEach(function (c) {
         tr.append(el('td', c[1], c[0]));
       });
